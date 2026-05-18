@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="tl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Tsek Mo 2028</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ───────── SCREEN: WELCOME ───────── -->
+  <div class="screen active" id="s-welcome">
+    <div class="welcome-bg" id="welcome-bg"></div>
+    <div class="welcome-gradient-overlay"></div>
+    <div class="welcome-content">
+      <div class="logo-wrap">
+        <div class="logo-icon">✓</div>
+        <h1 class="logo-text">Tsek Mo</h1>
+        <div class="logo-year">2028</div>
+      </div>
+      <p class="welcome-tagline">Bago ka bumoto, suriin mo muna ang iyong sarili.</p>
+      <div class="welcome-card">
+        <div class="wc-row"><span class="wc-icon">🔒</span><span>Pribado — walang makakakita ng iyong mga sagot</span></div>
+        <div class="wc-row"><span class="wc-icon">🚫</span><span>Walang kinikilingan — ikaw ang humusga, hindi kami</span></div>
+        <div class="wc-row"><span class="wc-icon">⏱️</span><span>12 tanong lang — mga 3 minuto ng iyong oras</span></div>
+      </div>
+      <button class="btn-primary" onclick="App.goHome()">Simulan na</button>
+      <p class="welcome-note">Para sa mga gustong mag-isip bago bumoto sa <strong>Mayo 8, 2028</strong></p>
+    </div>
+  </div>
+
+  <!-- ───────── SCREEN: HOME / ROLE SELECT ───────── -->
+  <div class="screen" id="s-home">
+    <div class="top-bar">
+      <div class="top-bar-left">
+        <span class="top-logo" id="top-logo-tap">✓ Tsek Mo</span>
+      </div>
+      <div class="privacy-pill">🔒 Pribado</div>
+    </div>
+
+    <!-- Photo slideshow — hidden when ranking is shown -->
+    <div class="photo-slider" id="photo-slider">
+      <div class="slide-track" id="slide-track"></div>
+      <div class="slide-dots" id="slide-dots"></div>
+    </div>
+
+    <div class="home-body">
+      <div class="role-tabs" id="role-tabs"></div>
+      <div class="home-intro-card">
+        <p class="home-intro-text" id="home-intro-text"></p>
+      </div>
+      <button class="btn-primary" id="btn-start-q" onclick="App.startQuestions()">
+        <span id="btn-start-label">Simulan ang Tsek Mo</span>
+        <span class="btn-arrow">→</span>
+      </button>
+      <div class="answered-note" id="answered-note" style="display:none">
+        <span>✔ Nasagutan mo na. </span><a href="#" onclick="App.startQuestions();return false;">Ulitin?</a>
+      </div>
+
+      <!-- Ranking — hidden until first round. Save button on TOP. -->
+      <div class="live-ranking-panel" id="ranking-panel" style="display:none">
+        <div class="lrp-top-row">
+          <div class="lrp-label">📊 Live ranking — <span id="lrp-role-name">Senador</span></div>
+          <button class="btn-save-img" id="btn-save-img" onclick="App.saveRankingImage()">📸 I-save</button>
+        </div>
+        <div class="lrp-shuffle-note">
+          🔀 <strong>Iba-iba ang tanong bawat round.</strong> Subukan nang maraming beses. Ang mga laging nangunguna ay siyang tunay na namumukod para sa iyo.
+        </div>
+        <div class="lrp-rows" id="lrp-rows"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────── SCREEN: QUESTIONS ───────── -->
+  <div class="screen" id="s-questions">
+    <div class="q-fixed-header">
+      <div class="top-bar">
+        <button class="back-btn" onclick="App.goHome()">← Bumalik</button>
+        <div class="privacy-pill">🔒 Pribado</div>
+      </div>
+      <div class="q-progress-wrap">
+        <div class="q-progress-top">
+          <span id="q-step-label">Tanong 1 sa 12</span>
+          <span id="q-cat-badge" class="q-cat-badge"></span>
+        </div>
+        <div class="q-progress-track">
+          <div class="q-progress-fill" id="q-prog-fill"></div>
+        </div>
+      </div>
+      <div class="q-question-block" id="q-question-block"></div>
+      <div class="q-action-row">
+        <button class="btn-skip-inline" onclick="App.nextQ(false)">Laktawan</button>
+        <button class="btn-next-inline" onclick="App.nextQ(true)">Susunod →</button>
+      </div>
+      <div class="q-hint-bar">👇 Piliin ang mga akma sa tanong. Maaaring marami o wala.</div>
+    </div>
+    <div class="q-body" id="q-body"></div>
+  </div>
+
+  <!-- ───────── SCREEN: ADMIN ───────── -->
+  <div class="screen" id="s-admin">
+    <div class="top-bar">
+      <button class="back-btn" onclick="App.goHome()">← Bumalik</button>
+      <span style="color:#F5C518;font-size:13px;font-weight:700">🔧 Admin Panel</span>
+    </div>
+    <div class="admin-body">
+      <div class="admin-section">
+        <h3 class="admin-title">Splash Screen Background Photo</h3>
+        <p class="admin-sub">URL ng larawan sa likod ng welcome screen</p>
+        <input class="admin-input" id="admin-splash" type="url" placeholder="https://...">
+      </div>
+      <div class="admin-section">
+        <h3 class="admin-title">Slideshow Photos (6 slides)</h3>
+        <p class="admin-sub">URL at caption ng bawat larawan sa home screen</p>
+        <div id="admin-slides"></div>
+      </div>
+      <button class="btn-primary" onclick="App.adminSave()" style="margin-top:8px">💾 I-save ang mga pagbabago</button>
+      <button class="btn-ghost" onclick="App.adminReset()" style="margin-top:8px">🔄 I-reset sa default</button>
+    </div>
+  </div>
+
+  <!-- PIN Overlay -->
+  <div id="pin-overlay" class="pin-overlay" style="display:none">
+    <div class="pin-box">
+      <div class="pin-title">🔒 Admin Access</div>
+      <div class="pin-sub">Ilagay ang 6-digit na PIN</div>
+      <input class="pin-input" id="pin-input" type="password" maxlength="6"
+        inputmode="numeric" oninput="App.checkPin(this.value)" placeholder="••••••">
+      <div class="pin-error" id="pin-error"></div>
+      <button class="btn-ghost" onclick="App.dismissPin()" style="margin-top:14px">Kanselahin</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

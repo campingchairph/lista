@@ -10,45 +10,66 @@ const ROLES = [
 ];
 
 /* ═══════════════════════════════════════════════
-   DATA — 2022 PH SENATE CANDIDATES (top 22)
-   Age = as of May 8 2028
+   DATA — 2022 PH ELECTION CANDIDATES
+   Age = as of May 8 2028 (6 years after 2022)
    wiki = Wikipedia article title for photo lookup
+   Senators: all 64 official ballot candidates kept
+   to top 24 most notable. President & VP: all
+   official ballot candidates included.
 ═══════════════════════════════════════════════ */
 const CANDIDATES = {
   senador: [
-    { id:'s01', name:'Aquino, Bam',          display:'Bam Aquino',           age:51, partido:'Liberal Party',        wiki:'Paolo Benigno Aquino IV',          bg:'#DBEAFE', tc:'#1E40AF' },
-    { id:'s02', name:'Bautista, Herbert',     display:'Herbert Bautista',     age:58, partido:'NPC',                  wiki:'Herbert Bautista',                 bg:'#FEF3C7', tc:'#92400E' },
-    { id:'s03', name:'Cayetano, Alan Peter',  display:'Alan Peter Cayetano',  age:56, partido:'Nacionalista',         wiki:'Alan Peter Cayetano',              bg:'#D1FAE5', tc:'#065F46' },
-    { id:'s04', name:'Colmenares, Neri',      display:'Neri Colmenares',      age:62, partido:'Makabayan',            wiki:'Neri Colmenares',                  bg:'#FCE7F3', tc:'#831843' },
-    { id:'s05', name:'dela Rosa, Bato',       display:'Ronald dela Rosa',     age:63, partido:'PDP-Laban',            wiki:'Ronald dela Rosa',                 bg:'#EDE9FE', tc:'#4C1D95' },
-    { id:'s06', name:'Diokno, Chel',          display:'Chel Diokno',          age:61, partido:'KNP',                  wiki:'Jose Manuel Diokno (politician)',  bg:'#ECFDF5', tc:'#065F46' },
-    { id:'s07', name:'Ejercito, JV',          display:'JV Ejercito',          age:50, partido:'UNA',                  wiki:'Joseph Victor Ejercito',           bg:'#FFF7ED', tc:'#C2410C' },
-    { id:'s08', name:'Escudero, Chiz',        display:'Francis Escudero',     age:58, partido:'NPC',                  wiki:'Francis Escudero',                 bg:'#F0FDF4', tc:'#166534' },
-    { id:'s09', name:'Estrada, Jinggoy',      display:'Jinggoy Estrada',      age:65, partido:'PMP',                  wiki:'Jinggoy Estrada',                  bg:'#FEF2F2', tc:'#991B1B' },
-    { id:'s10', name:'Gatchalian, Win',       display:'Win Gatchalian',       age:51, partido:'NPC',                  wiki:'Sherwin Gatchalian',               bg:'#EFF6FF', tc:'#1D4ED8' },
-    { id:'s11', name:'Go, Bong',              display:'Bong Go',              age:54, partido:'PDP-Laban',            wiki:'Christopher Lawrence Go',          bg:'#FDF4FF', tc:'#7E22CE' },
-    { id:'s12', name:'Gordon, Dick',          display:'Dick Gordon',          age:82, partido:'Bagumbayan-VNP',       wiki:'Richard Gordon',                   bg:'#FFF1F2', tc:'#BE123C' },
-    { id:'s13', name:'Hontiveros, Risa',      display:'Risa Hontiveros',      age:58, partido:'Akbayan',              wiki:'Risa Hontiveros',                  bg:'#FDF2F8', tc:'#9D174D' },
-    { id:'s14', name:'Legarda, Loren',        display:'Loren Legarda',        age:62, partido:'NPC',                  wiki:'Loren Legarda',                    bg:'#FFFBEB', tc:'#B45309' },
-    { id:'s15', name:'Marcos, Imee',          display:'Imee Marcos',          age:69, partido:'Nacionalista',         wiki:'Imee Marcos',                      bg:'#F0F9FF', tc:'#0369A1' },
-    { id:'s16', name:'Padilla, Robin',        display:'Robin Padilla',        age:57, partido:'PDP-Laban',            wiki:'Robin Padilla',                    bg:'#FFF7ED', tc:'#C2410C' },
-    { id:'s17', name:'Revilla, Bong',         display:'Bong Revilla Jr.',     age:59, partido:'Lakas-CMD',            wiki:'Ramon Revilla Jr.',                bg:'#F0FDF4', tc:'#15803D' },
-    { id:'s18', name:'Tolentino, Francis',    display:'Francis Tolentino',    age:65, partido:'PDP-Laban',            wiki:'Francis Tolentino',                bg:'#EEF2FF', tc:'#3730A3' },
-    { id:'s19', name:'Trillanes, Antonio',    display:'Antonio Trillanes IV', age:55, partido:'Liberal Party',        wiki:'Antonio Trillanes IV',             bg:'#FEF2F2', tc:'#B91C1C' },
-    { id:'s20', name:'Villanueva, Joel',      display:'Joel Villanueva',      age:52, partido:'CIBAC / Independent',  wiki:'Joel Villanueva',                  bg:'#F0FDF4', tc:'#166534' },
-    { id:'s21', name:'Villar, Mark',          display:'Mark Villar',          age:49, partido:'NPC',                  wiki:'Mark Villar',                      bg:'#FFFBEB', tc:'#92400E' },
-    { id:'s22', name:'Zubiri, Migz',          display:'Migz Zubiri',          age:55, partido:'Independent',          wiki:'Juan Miguel Zubiri',               bg:'#EFF6FF', tc:'#1E40AF' },
+    { id:'s01', name:'Aquino, Bam',           display:'Bam Aquino',           age:51, partido:'Liberal Party',           wiki:'Paolo Benigno Aquino IV',              bg:'#DBEAFE', tc:'#1E40AF' },
+    { id:'s02', name:'Bautista, Herbert',      display:'Herbert Bautista',     age:58, partido:'NPC',                     wiki:'Herbert Bautista',                     bg:'#FEF3C7', tc:'#92400E' },
+    { id:'s03', name:'Belgica, Greco',         display:'Greco Belgica',        age:56, partido:'PDDS',                    wiki:'Greco Belgica',                        bg:'#F0FDF4', tc:'#166534' },
+    { id:'s04', name:'Cayetano, Alan Peter',   display:'Alan Peter Cayetano',  age:56, partido:'Nacionalista',            wiki:'Alan Peter Cayetano',                  bg:'#D1FAE5', tc:'#065F46' },
+    { id:'s05', name:'Colmenares, Neri',       display:'Neri Colmenares',      age:62, partido:'Makabayan',               wiki:'Neri Colmenares',                      bg:'#FCE7F3', tc:'#831843' },
+    { id:'s06', name:'dela Rosa, Bato',        display:'Ronald dela Rosa',     age:63, partido:'PDP-Laban',               wiki:'Ronald dela Rosa',                     bg:'#EDE9FE', tc:'#4C1D95' },
+    { id:'s07', name:'Diokno, Chel',           display:'Chel Diokno',          age:61, partido:'KNP',                    wiki:'Jose Manuel Diokno (politician)',       bg:'#ECFDF5', tc:'#065F46' },
+    { id:'s08', name:'Ejercito, JV',           display:'JV Ejercito',          age:50, partido:'UNA',                    wiki:'Joseph Victor Ejercito',               bg:'#FFF7ED', tc:'#C2410C' },
+    { id:'s09', name:'Escudero, Chiz',         display:'Francis Escudero',     age:58, partido:'NPC',                    wiki:'Francis Escudero',                     bg:'#F0FDF4', tc:'#166534' },
+    { id:'s10', name:'Estrada, Jinggoy',       display:'Jinggoy Estrada',      age:65, partido:'PMP',                    wiki:'Jinggoy Estrada',                      bg:'#FEF2F2', tc:'#991B1B' },
+    { id:'s11', name:'Gatchalian, Win',        display:'Win Gatchalian',       age:51, partido:'NPC',                    wiki:'Sherwin Gatchalian',                   bg:'#EFF6FF', tc:'#1D4ED8' },
+    { id:'s12', name:'Go, Bong',               display:'Bong Go',              age:54, partido:'PDP-Laban',              wiki:'Christopher Lawrence Go',              bg:'#FDF4FF', tc:'#7E22CE' },
+    { id:'s13', name:'Gordon, Dick',           display:'Dick Gordon',          age:82, partido:'Bagumbayan-VNP',         wiki:'Richard Gordon',                       bg:'#FFF1F2', tc:'#BE123C' },
+    { id:'s14', name:'Gutoc, Samira',          display:'Samira Gutoc',         age:52, partido:'Aksyon Demokratiko',     wiki:'Samira Gutoc',                         bg:'#FDF4FF', tc:'#6D28D9' },
+    { id:'s15', name:'Honasan, Gringo',        display:'Gringo Honasan',       age:76, partido:'Independent',           wiki:'Gringo Honasan',                       bg:'#FEF3C7', tc:'#92400E' },
+    { id:'s16', name:'Hontiveros, Risa',       display:'Risa Hontiveros',      age:58, partido:'Akbayan',               wiki:'Risa Hontiveros',                      bg:'#FDF2F8', tc:'#9D174D' },
+    { id:'s17', name:'Lacson, Kuya Alex',      display:'Kuya Alex Lacson',     age:65, partido:'Kapatiran Party',        wiki:'Alex Lacson',                          bg:'#ECFDF5', tc:'#065F46' },
+    { id:'s18', name:'Legarda, Loren',         display:'Loren Legarda',        age:62, partido:'NPC',                   wiki:'Loren Legarda',                        bg:'#FFFBEB', tc:'#B45309' },
+    { id:'s19', name:'Marcos, Imee',           display:'Imee Marcos',          age:69, partido:'Nacionalista',          wiki:'Imee Marcos',                          bg:'#F0F9FF', tc:'#0369A1' },
+    { id:'s20', name:'Padilla, Robin',         display:'Robin Padilla',        age:57, partido:'PDP-Laban',             wiki:'Robin Padilla',                        bg:'#FFF7ED', tc:'#C2410C' },
+    { id:'s21', name:'Panelo, Sal',            display:'Salvador Panelo',      age:73, partido:'PDP-Laban',             wiki:'Salvador Panelo',                      bg:'#F8FAFC', tc:'#475569' },
+    { id:'s22', name:'Revilla, Bong',          display:'Bong Revilla Jr.',     age:59, partido:'Lakas-CMD',             wiki:'Ramon Revilla Jr.',                    bg:'#F0FDF4', tc:'#15803D' },
+    { id:'s23', name:'Tolentino, Francis',     display:'Francis Tolentino',    age:65, partido:'PDP-Laban',             wiki:'Francis Tolentino',                    bg:'#EEF2FF', tc:'#3730A3' },
+    { id:'s24', name:'Trillanes, Antonio',     display:'Antonio Trillanes IV', age:55, partido:'Liberal Party',         wiki:'Antonio Trillanes IV',                 bg:'#FEF2F2', tc:'#B91C1C' },
+    { id:'s25', name:'Tulfo, Raffy',           display:'Raffy Tulfo',          age:65, partido:'Independent',           wiki:'Raffy Tulfo',                          bg:'#FEF9C3', tc:'#854D0E' },
+    { id:'s26', name:'Villanueva, Joel',       display:'Joel Villanueva',      age:52, partido:'CIBAC / Independent',   wiki:'Joel Villanueva',                      bg:'#F0FDF4', tc:'#166534' },
+    { id:'s27', name:'Villar, Mark',           display:'Mark Villar',          age:49, partido:'NPC',                   wiki:'Mark Villar',                          bg:'#FFFBEB', tc:'#92400E' },
+    { id:'s28', name:'Zubiri, Migz',           display:'Migz Zubiri',          age:55, partido:'Independent',           wiki:'Juan Miguel Zubiri',                   bg:'#EFF6FF', tc:'#1E40AF' },
   ],
   presidente: [
-    { id:'p1', name:'Duterte, Sara',    display:'Sara Duterte',      age:49, partido:'Hugpong ng Pagbabago', wiki:'Sara Duterte',        bg:'#DBEAFE', tc:'#1E40AF' },
-    { id:'p2', name:'Hontiveros, Risa', display:'Risa Hontiveros',   age:58, partido:'Akbayan',              wiki:'Risa Hontiveros',     bg:'#FCE7F3', tc:'#831843' },
-    { id:'p3', name:'Moreno, Isko',     display:'Isko Moreno',       age:50, partido:'Aksyon Demokratiko',   wiki:'Francisco Domagoso',  bg:'#D1FAE5', tc:'#065F46' },
-    { id:'p4', name:'Pacquiao, Manny',  display:'Manny Pacquiao',    age:49, partido:'PROMDI',               wiki:'Manny Pacquiao',      bg:'#FEF3C7', tc:'#92400E' },
+    { id:'p1', name:'Abella, Ernie',     display:'Ernie Abella',     age:76, partido:'Independent',        wiki:'Ernesto Abella',           bg:'#F8FAFC', tc:'#475569' },
+    { id:'p2', name:'de Guzman, Leody', display:'Leody de Guzman',  age:60, partido:'Partido Lakas ng Masa', wiki:'Leody de Guzman',        bg:'#FEF2F2', tc:'#991B1B' },
+    { id:'p3', name:'Gonzales, Norberto',display:'Norberto Gonzales',age:79, partido:'PDSP',               wiki:'Norberto Gonzales',        bg:'#F0F9FF', tc:'#0369A1' },
+    { id:'p4', name:'Lacson, Ping',      display:'Ping Lacson',      age:70, partido:'Independent',        wiki:'Panfilo Lacson',           bg:'#FFFBEB', tc:'#B45309' },
+    { id:'p5', name:'Mangondato, Faisal',display:'Faisal Mangondato',age:67, partido:'Katipunan ng Kamalayang Kayumanggi', wiki:'Faisal Mangondato', bg:'#F0FDF4', tc:'#166534' },
+    { id:'p6', name:'Marcos, Bongbong',  display:'Bongbong Marcos',  age:70, partido:'PFP',                wiki:'Bongbong Marcos',          bg:'#EFF6FF', tc:'#1E40AF' },
+    { id:'p7', name:'Montemayor, Jose Jr.',display:'Jose Montemayor Jr.',age:73,partido:'DPP',             wiki:'Jose Montemayor Jr.',      bg:'#ECFDF5', tc:'#065F46' },
+    { id:'p8', name:'Moreno, Isko',      display:'Isko Moreno',      age:50, partido:'Aksyon Demokratiko', wiki:'Francisco Domagoso',       bg:'#D1FAE5', tc:'#065F46' },
+    { id:'p9', name:'Pacquiao, Manny',   display:'Manny Pacquiao',   age:49, partido:'PROMDI',             wiki:'Manny Pacquiao',           bg:'#FEF3C7', tc:'#92400E' },
+    { id:'p10',name:'Robredo, Leni',     display:'Leni Robredo',     age:59, partido:'Independent',        wiki:'Leni Robredo',             bg:'#FCE7F3', tc:'#831843' },
   ],
   bisepresidente: [
-    { id:'v1', name:'Binay, Abby',      display:'Abby Binay',        age:47, partido:'UNA',          wiki:'Abigail Binay',    bg:'#DBEAFE', tc:'#1E40AF' },
-    { id:'v2', name:'Lacson, Ping',     display:'Ping Lacson',       age:70, partido:'Independent',  wiki:'Panfilo Lacson',   bg:'#FEF3C7', tc:'#92400E' },
-    { id:'v3', name:'Pangilinan, Kiko', display:'Kiko Pangilinan',   age:63, partido:'Liberal Party',wiki:'Francis Pangilinan',bg:'#D1FAE5', tc:'#065F46' },
+    { id:'v1', name:'Atienza, Lito',      display:'Lito Atienza',     age:79, partido:'PROMDI',             wiki:'Lito Atienza',            bg:'#FEF3C7', tc:'#92400E' },
+    { id:'v2', name:'Bello, Walden',      display:'Walden Bello',     age:80, partido:'Partido Lakas ng Masa', wiki:'Walden Bello',          bg:'#FEF2F2', tc:'#991B1B' },
+    { id:'v3', name:'David, Rizalito',    display:'Rizalito David',   age:74, partido:'DPP',                wiki:'Rizalito David',          bg:'#F8FAFC', tc:'#475569' },
+    { id:'v4', name:'Duterte, Sara',      display:'Sara Duterte',     age:49, partido:'Lakas-CMD',          wiki:'Sara Duterte',            bg:'#DBEAFE', tc:'#1E40AF' },
+    { id:'v5', name:'Lopez, Manny SD',    display:'Manny SD Lopez',   age:68, partido:'Labor Party Philippines', wiki:'Manny Lopez (politician)', bg:'#ECFDF5', tc:'#065F46' },
+    { id:'v6', name:'Ong, Willie',        display:'Willie Ong',       age:62, partido:'Aksyon Demokratiko', wiki:'Willie Ong',              bg:'#F0FDF4', tc:'#166534' },
+    { id:'v7', name:'Pangilinan, Kiko',   display:'Kiko Pangilinan',  age:63, partido:'Liberal Party',      wiki:'Francis Pangilinan',      bg:'#FCE7F3', tc:'#831843' },
+    { id:'v8', name:'Serapio, Carlos',    display:'Carlos Serapio',   age:64, partido:'Katipunan ng Kamalayang Kayumanggi', wiki:'Carlos Serapio',  bg:'#FFFBEB', tc:'#B45309' },
+    { id:'v9', name:'Sotto, Tito',        display:'Tito Sotto',       age:81, partido:'NPC',                wiki:'Vicente Sotto III',       bg:'#EDE9FE', tc:'#4C1D95' },
   ],
 };
 

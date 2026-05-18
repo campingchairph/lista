@@ -94,47 +94,44 @@ html, body {
 
 /* ── WELCOME SCREEN ── */
 #s-welcome {
-  align-items: center;
-  justify-content: flex-end;
+  align-items: stretch;
+  justify-content: flex-start;
   min-height: 100vh;
   position: relative;
   overflow: hidden;
+  flex-direction: column;
 }
-/* Full-bleed background photo */
+/* Full-bleed background photo — top half only */
 .welcome-bg {
-  position: absolute;
-  inset: 0;
+  height: 50vh;
+  flex-shrink: 0;
   background-size: cover;
   background-position: center top;
   background-color: var(--blue-dark);
-  pointer-events: none;
+  position: relative;
 }
-/* Gradient overlay: dark blue at bottom where content sits, transparent at top */
+/* Gradient on the photo — darkens at bottom edge for smooth blend */
 .welcome-gradient-overlay {
   position: absolute;
-  inset: 0;
+  bottom: 0; left: 0; right: 0;
+  height: 60%;
   pointer-events: none;
-  background: linear-gradient(
-    to bottom,
-    rgba(13,59,140,.30) 0%,
-    rgba(13,59,140,.55) 35%,
-    rgba(13,27,60,.88) 65%,
-    rgba(10,18,40,.97) 100%
-  );
+  background: linear-gradient(to bottom, transparent 0%, rgba(10,18,40,.7) 100%);
   z-index: 1;
 }
 
 .welcome-content {
+  flex: 1;
   position: relative;
   z-index: 2;
-  background: rgba(10,18,40,.92);
-  border-radius: 28px 28px 0 0;
-  padding: 28px 24px 40px;
-  width: 100%;
+  background: rgba(10,18,40,.97);
+  border-radius: 20px 20px 0 0;
+  margin-top: -20px; /* slight overlap onto photo */
+  padding: 24px 24px 40px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   /* PH flag 3-color top stripe */
   border-top: 5px solid transparent;
   border-image: linear-gradient(90deg, var(--blue-dark) 33%, var(--yellow) 33% 66%, var(--ph-red) 66%) 1;
@@ -438,41 +435,47 @@ html, body {
 }
 .role-tabs {
   display: flex;
-  gap: 10px;
+  gap: 0;
   flex-wrap: nowrap;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: 4px;
-  scrollbar-width: none;
+  overflow: visible;
+  margin-bottom: -1px; /* connect to card below */
 }
-.role-tabs::-webkit-scrollbar { display: none; }
 .role-tab {
-  flex-shrink: 0;
-  padding: 10px 20px;
-  border-radius: 30px;
-  font-size: 15px;
+  flex: 1;
+  padding: 9px 6px;
+  border-radius: 10px 10px 0 0;
+  font-size: 12px;
   font-weight: 700;
   font-family: 'Nunito', sans-serif;
   cursor: pointer;
-  border: 2.5px solid var(--blue-light);
-  background: var(--white);
-  color: var(--blue);
-  transition: all .2s;
+  border: 1.5px solid var(--gray-2);
+  border-bottom: none;
+  background: var(--gray-1);
+  color: var(--text-light);
+  transition: all .15s;
   white-space: nowrap;
+  text-align: center;
+  margin-right: 3px;
+  position: relative;
+  z-index: 0;
 }
+.role-tab:last-child { margin-right: 0; }
 .role-tab.active {
-  background: var(--ph-red);
-  color: var(--white);
-  border-color: var(--ph-red);
+  background: var(--yellow-pale);
+  color: var(--ph-red);
+  border-color: var(--yellow);
+  border-bottom-color: var(--yellow-pale); /* hides bottom border, merges with card */
+  font-weight: 800;
+  z-index: 2;
 }
 .home-intro-card {
   background: var(--yellow-pale);
-  border-radius: var(--radius-md);
-  border-left: 4px solid var(--ph-red);
-  border-top: 1px solid #F5C518;
-  border-right: 1px solid #F5C518;
-  border-bottom: 1px solid #F5C518;
-  padding: 16px 18px;
+  border-radius: 0 var(--radius-sm) var(--radius-md) var(--radius-md);
+  border: 1.5px solid var(--yellow);
+  border-top-left-radius: 0;
+  padding: 14px 16px;
+  position: relative;
+  z-index: 1;
 }
 .home-intro-text {
   font-size: 15px;

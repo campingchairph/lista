@@ -131,97 +131,133 @@ function loadPhotosAsync(cands) {
 
 /* ═══════════════════════════════════════════════
    DATA — QUESTIONS
-   Structure: 4 positibo + 4 negatibo + 4 espesipiko
-   bad:true  → checked candidate gets -2
-   bad:false → checked candidate gets +3
-   Each round: exactly 4 of each type, shuffled within type
+   4 groups: kilala (3) + kalikasan (2) +
+             kalayaan (2) + pamamahala (1) +
+             negatibo (4, weighted -1 to -4)
+
+   bad:false  → +3 per checked candidate
+   bad:true   → score = negative weight (varies)
 ═══════════════════════════════════════════════ */
 
-/* 4 POSITIBO — good traits, check who has them */
-const Q_POSITIVE = [
+const Q_KILALA = [
   {
-    type: 'positibo',
-    text: 'May malasakit ba siya sa mahihirap?',
-    sub: 'Ang tunay na lingkod-bayan ay may patunay, hindi lang salita. Piliin ang mga sa tingin mo ay talagang kumikilos para sa ordinaryong Pilipino.',
-    bad: false,
+    type: 'kilala',
+    text: 'Kilala ko ba siya — hindi lang ang pangalan?',
+    sub: 'Pamilyar lang ba siya dahil artista o sikat? O talagang alam mo ang nagawa niya?',
+    bad: false, score: 3,
   },
   {
-    type: 'positibo',
-    text: 'Mapagkakatiwalaan mo ba siya?',
-    sub: 'Sa lahat ng narinig at nakita mo, siya ba ay tapat? Piliin ang mga sa tingin mo ay may integridad at tinutupad ang kanilang salita.',
-    bad: false,
+    type: 'kilala',
+    text: 'Narinig ko na ba siyang magsalita tungkol sa tunay na problema?',
+    sub: 'Hindi sa rally — kundi sa hearing, balita, o tunay na diskusyon.',
+    bad: false, score: 3,
   },
   {
-    type: 'positibo',
-    text: 'Nakikinig ba siya sa mamamayan?',
-    sub: 'Ang magandang lider ay nakikinig sa bayan bago kumilos. Piliin ang mga sa tingin mo ay bukas sa ibang pananaw at hindi puro sariling desisyon.',
-    bad: false,
-  },
-  {
-    type: 'positibo',
-    text: 'May kakayahan ba siyang gawin ang trabaho ng Senador?',
-    sub: 'Ang Senador ay gumagawa ng batas para sa buong bansa, hindi lang sa kanyang lugar. Piliin ang mga may tunay na kaalaman at kakayahan para dito.',
-    bad: false,
+    type: 'kilala',
+    text: 'Alam ko ba kung para sa sino siya nagtatrabaho?',
+    sub: 'Para sa bayan — o para sa sarili at pamilya niya?',
+    bad: false, score: 3,
   },
 ];
 
-/* 4 NEGATIBO — red flags, check who might do these */
-const Q_NEGATIVE = [
+const Q_KALIKASAN = [
   {
-    type: 'negatibo',
-    text: 'Posible bang magnakaw siya sa pondo ng bayan?',
-    sub: 'Kapag nasa kapangyarihan na, maraming pagkakataon para mag-abuso. Piliin ang mga sa tingin mo ay may posibilidad na gawin ito kung wala mang nagbabantay.',
-    bad: true,
+    type: 'kalikasan',
+    text: 'Pareho ba kaming nagmamalasakit sa kalikasan?',
+    sub: 'Baha, mining, basura — sino sa kanila ang nagkilos, hindi lang nagsalita?',
+    bad: false, score: 3,
   },
   {
-    type: 'negatibo',
-    text: 'Para sa sarili ba niya ang lahat ng ginagawa niya?',
-    sub: 'May mga politiko na ang bawat galaw ay para sa susunod na eleksyon at hindi para sa bayan. Piliin ang mga sa tingin mo ay pangunahing nagtatrabaho para sa sariling interes.',
-    bad: true,
+    type: 'kalikasan',
+    text: 'Pareho ba kaming naniniwala na ang lupa ay hindi dapat ibenta sa malalaking negosyo?',
+    sub: 'Lalo na ang lupa ng mga magsasaka at katutubo.',
+    bad: false, score: 3,
   },
   {
-    type: 'negatibo',
-    text: 'Sikat ba siya dahil artista o kilala lang, hindi dahil sa nagawa niya?',
-    sub: 'Marami ang bumoboto sa pangalan at hindi sa plataporma. Ang pagiging sikat ay hindi patunay ng kakayahan. Piliin ang mga kilala mo dahil sa katanyagan lamang.',
-    bad: true,
-  },
-  {
-    type: 'negatibo',
-    text: 'Ang ayuda ba niya ay para lang makakuha ng boto?',
-    sub: 'Tandaan: ang ayuda ay galing sa iyong buwis at hindi ito regalo ng politiko. Piliin ang mga sa tingin mo ay gumagamit ng tulong para makuha ang iyong boto.',
-    bad: true,
+    type: 'kalikasan',
+    text: 'Pareho ba kaming naniniwala na ang tulong sa panahon ng sakuna ay karapatan — hindi regalo?',
+    sub: 'Ang ayuda ay galing sa iyong buwis. Hindi ito bigay ng politiko.',
+    bad: false, score: 3,
   },
 ];
 
-/* 4 ESPESIPIKO — platform and programs */
-const Q_SPECIFIC = [
+const Q_KALAYAAN = [
   {
-    type: 'espesipiko',
-    text: 'Edukasyon',
-    sub: 'Mahalaga ang senador na may tunay na programa para sa edukasyon. Piliin ang mga may kongkretong plano para sa mas magandang paaralan, mas maraming iskolarship, at mas mataas na kalidad ng pagtuturo.',
-    bad: false,
+    type: 'kalayaan',
+    text: 'Pareho ba kaming naniniwala sa kalayaan sa pagsasalita?',
+    sub: 'Kahit ang sinasabi ay hindi natin gusto — basta totoo at tama.',
+    bad: false, score: 3,
   },
   {
-    type: 'espesipiko',
-    text: 'Trabaho at kabuhayan',
-    sub: 'Ang trabaho ay pundasyon ng bawat pamilya. Piliin ang mga may programa para lumikha ng trabaho, hindi lang para sa mga may koneksyon kundi para sa lahat ng Pilipino.',
-    bad: false,
-  },
-  {
-    type: 'espesipiko',
-    text: 'Kalusugan',
-    sub: 'Ang gamot, ospital, at doktor ay dapat abot-kaya ng lahat at hindi lang ng mayayaman. Piliin ang mga aktibong nagtataguyod ng mas abot-kayang serbisyong pangkalusugan.',
-    bad: false,
-  },
-  {
-    type: 'espesipiko',
-    text: 'Kalikasan at pagkain',
-    sub: 'Ang tubig, lupa, at likas na yaman ay pamana ng Pilipino. Piliin ang mga may programa para protektahan ang kapaligiran at tiyaking may sapat na pagkain ang bawat pamilya.',
-    bad: false,
+    type: 'kalayaan',
+    text: 'Pareho ba kaming naniniwala na walang dapat matakot dahil nagsalita ng totoo?',
+    sub: 'Buhay, kaligtasan, at hustisya — para sa lahat.',
+    bad: false, score: 3,
   },
 ];
 
-const QUESTION_BANK = [...Q_POSITIVE, ...Q_NEGATIVE, ...Q_SPECIFIC];
+const Q_PAMAMAHALA = [
+  {
+    type: 'pamamahala',
+    text: 'Pareho ba kaming naniniwala na ang mahirap at mayaman ay may parehong karapatan sa batas?',
+    sub: 'Sa mata ng batas, walang mayaman o mahirap. Ganoon ba talaga?',
+    bad: false, score: 3,
+  },
+  {
+    type: 'pamamahala',
+    text: 'Pareho ba kaming naniniwala na ang pera ng bayan ay para sa bayan?',
+    sub: 'Hindi para sa pamilya, kaibigan, o partido ng may kapangyarihan.',
+    bad: false, score: 3,
+  },
+  {
+    type: 'pamamahala',
+    text: 'Pareho ba kaming naniniwala na ang edukasyon, kalusugan, at trabaho ay karapatan — hindi pribilehiyo?',
+    sub: 'Ito ang pinaka-basic na pangangailangan ng bawat Pilipino.',
+    bad: false, score: 3,
+  },
+];
+
+/* Negative questions — weighted by severity */
+const Q_NEGATIBO = [
+  {
+    type: 'negatibo',
+    text: 'Siya ba ay sikat dahil artista o kilala lang — hindi dahil sa nagawa niya?',
+    sub: 'Ang boto ay hindi para sa paboritong artista. Ang pagiging sikat ay hindi patunay ng kakayahan.',
+    bad: true, score: -1, severity: 'Babala',
+  },
+  {
+    type: 'negatibo',
+    text: 'Sa tingin mo ba ay gagamitin niya ang ayuda para makakuha ng boto?',
+    sub: 'Ang ayuda ay galing sa iyong buwis. Kapag ginamit ito para sa boto, ikaw ang naagrabyado.',
+    bad: true, score: -2, severity: 'Katamtaman',
+  },
+  {
+    type: 'negatibo',
+    text: 'Sa tingin mo ba ay mas uunahin niya ang sariling pamilya at mga kaibigan kaysa sa bayan?',
+    sub: 'Dynasty, kaibigan sa gobyerno, negosyo ng pamilya — ito ang mga palatandaan.',
+    bad: true, score: -3, severity: 'Mataas',
+  },
+  {
+    type: 'negatibo',
+    text: 'Sa tingin mo ba ay posible siyang magnakaw sa pondo ng bayan?',
+    sub: 'Pork barrel, confidential funds, ghost projects — sino sa kanila ang mukhang kaya?',
+    bad: true, score: -4, severity: 'Kritikal',
+  },
+];
+
+const QUESTION_BANK = [
+  ...Q_KILALA, ...Q_KALIKASAN, ...Q_KALAYAAN,
+  ...Q_PAMAMAHALA, ...Q_NEGATIBO,
+];
+
+/* Pick exactly 12: all 4 negatibo + 8 from positive pool, shuffled */
+function pickQuestions() {
+  const positivePool = shuffle([
+    ...Q_KILALA, ...Q_KALIKASAN, ...Q_KALAYAAN, ...Q_PAMAMAHALA,
+  ]);
+  const positive8 = positivePool.slice(0, 8);
+  return shuffle([...positive8, ...Q_NEGATIBO]);
+}
 
 /* Shuffle helper */
 function shuffle(arr) {
@@ -231,15 +267,6 @@ function shuffle(arr) {
     [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
-}
-
-/* Always pick exactly 4+4+4 = 12, shuffled within each group */
-function pickQuestions() {
-  return [
-    ...shuffle(Q_POSITIVE).slice(0, 4),
-    ...shuffle(Q_NEGATIVE).slice(0, 4),
-    ...shuffle(Q_SPECIFIC).slice(0, 4),
-  ];
 }
 
 /* ═══════════════════════════════════════════════
@@ -504,18 +531,29 @@ function renderQuestion() {
   const pct   = Math.max(Math.round((qi / total) * 100), 4);
 
   document.getElementById('q-step-label').textContent = `${qi + 1} / ${total}`;
-  const typeLabels = { positibo:'✅ Positibo', negatibo:'⚠️ Negatibo', espesipiko:'📋 Programa' };
+
+  const typeLabels = {
+    kilala:     '🔍 Kilala mo ba?',
+    kalikasan:  '🌿 Kalikasan',
+    kalayaan:   '✊ Kalayaan',
+    pamamahala: '🏛 Pamamahala',
+    negatibo:   `⚠️ ${q.severity || 'Babala'}`,
+  };
+  const typeCls = q.bad ? 'bad' : 'good';
   const badge = document.getElementById('q-cat-badge');
-  badge.textContent = typeLabels[q.type] || (q.bad ? '⚠️ Negatibo' : '✅ Positibo');
-  badge.className = 'q-cat-badge ' + (q.bad ? 'bad' : q.type === 'espesipiko' ? 'specific' : 'good');
+  badge.textContent = typeLabels[q.type] || '';
+  badge.className = `q-cat-badge ${typeCls}`;
   document.getElementById('q-prog-fill').style.width = pct + '%';
 
-  const typeLabel = typeLabels[q.type] || '';
-  const badgeCls  = q.bad ? 'bad' : q.type === 'espesipiko' ? 'specific' : 'good';
+  const scoreNote = q.bad
+    ? `<div class="q-score-note">Minumarkahan ng <strong>${q.score} puntos</strong> ang mapipili</div>`
+    : '';
+
   document.getElementById('q-question-block').innerHTML = `
-    <div class="q-type-badge ${badgeCls}">${typeLabel}</div>
+    <div class="q-type-badge ${typeCls}">${typeLabels[q.type] || ''}</div>
     <div class="q-text">${q.text}</div>
     <div class="q-subtext">${q.sub}</div>
+    ${scoreNote}
   `;
 
   const checkedSet = state.checked[qi] || new Set();
@@ -539,7 +577,10 @@ function renderQuestion() {
       </div>`;
   }).join('');
 
-  document.getElementById('q-body').innerHTML = `<div class="cand-list-v">${rows}</div>`;
+  document.getElementById('q-body').innerHTML = `
+    <div class="az-label">Nakaayos ayon sa apelyido (A–Z) — walang pinoprioridad</div>
+    <div class="cand-list-v">${rows}</div>
+  `;
   fixQBodyOffset();
   requestAnimationFrame(() => loadPhotosAsync(cands));
 }
@@ -718,7 +759,7 @@ const App = {
       const set  = state.checked[qi];
       const sc   = state.scores[role];
       (CANDIDATES[role] || []).forEach(c => {
-        if (set.has(c.id)) sc[c.id] = (sc[c.id] || 0) + (q.bad ? -2 : 3);
+        if (set.has(c.id)) sc[c.id] = (sc[c.id] || 0) + q.score;
       });
       renderRanking();
     }

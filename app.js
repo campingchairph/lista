@@ -482,36 +482,7 @@ function renderResults() {
 ═══════════════════════════════════════════════ */
 const App = {
 
-  saveRankingImage() {
-    const btn = document.getElementById('btn-save-img');
-    const panel = document.getElementById('ranking-panel');
-    if (!panel || !window.html2canvas) return;
-    btn.classList.add('saving');
-    btn.textContent = '⏳ Nag-se-save...';
-
-    html2canvas(panel, {
-      backgroundColor: '#0D3B8C',
-      scale: 2,
-      useCORS: true,
-      allowTaint: true,
-      logging: false,
-    }).then(canvas => {
-      const link = document.createElement('a');
-      const role = state.role;
-      const roleLabel = ROLES.find(r => r.id === role)?.label || 'ranking';
-      link.download = `tsekmo-${roleLabel}-ranking.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-      btn.classList.remove('saving');
-      btn.innerHTML = '✅ Na-save na! I-save ulit?';
-      setTimeout(() => {
-        btn.innerHTML = '📸 I-save ang ranking bilang larawan';
-      }, 3000);
-    }).catch(() => {
-      btn.classList.remove('saving');
-      btn.innerHTML = '📸 I-save ang ranking bilang larawan';
-    });
-  },
+  goHome() {
     renderHome();
     showScreen('s-home');
   },
@@ -524,7 +495,6 @@ const App = {
   startQuestions() {
     const role = state.role;
     initScores(role);
-    /* reset scores for fresh run */
     (CANDIDATES[role] || []).forEach(c => { state.scores[role][c.id] = 0; });
     state.answered[role] = false;
     state.questions = pickQuestions();
@@ -551,9 +521,9 @@ const App = {
     } else {
       set.add(candId);
       item.className = `cand-item ${q.bad ? 'checked-bad' : 'checked'}`;
-      chk.textContent = '✓';
       if (q.bad) { chk.style.background='#DC2626'; chk.style.borderColor='#991B1B'; chk.style.color='#fff'; }
       else        { chk.style.background='#F5C518'; chk.style.borderColor='#C9960A'; chk.style.color='#0D3B8C'; }
+      chk.textContent = '✓';
     }
   },
 
@@ -565,20 +535,15 @@ const App = {
       const set  = state.checked[qi];
       const sc   = state.scores[role];
       (CANDIDATES[role] || []).forEach(c => {
-        if (set.has(c.id)) {
-          sc[c.id] = (sc[c.id] || 0) + (q.bad ? -2 : 3);
-        }
+        if (set.has(c.id)) sc[c.id] = (sc[c.id] || 0) + (q.bad ? -2 : 3);
       });
       renderRanking();
     }
-
     state.currentQ++;
     if (state.currentQ >= state.questions.length) {
       state.answered[state.role] = true;
-      // No results screen — go straight home with updated rankings
       renderHome();
       showScreen('s-home');
-      // Scroll down to ranking after a beat
       setTimeout(() => {
         const panel = document.getElementById('ranking-panel');
         if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -588,6 +553,132 @@ const App = {
     renderQuestion();
     fixQBodyOffset();
   },
+
+  saveRankingImage() {
+    const btn   = document.getElementById('btn-save-img');
+    const panel = document.getElementById('ranking-panel');
+    if (!panel || !btn) return;
+
+    btn.classList.add('saving');
+    btn.textContent = '⏳ Nag-se-save...';
+
+    const role      = state.role;
+    const roleLabel = ROLES.find(r => r.id === role)?.label || 'ranking';
+    const w = panel.scrollWidth;
+    const h = panel.scrollHeight;
+
+    // Build rows as plain text list for a clean canvas render
+    const scores  = state.scores[role] || {};
+    const cands   = CANDIDATES[role] || [];
+    const sorted  = [...cands].sort((a,b) => (scores[b.id]||0)-(scores[a.id]||0));
+    const topN    = role === 'senador' ? 12 : 1;
+
+    const canvas  = document.createElement('canvas');
+    const scale   = 2;
+    const cw      = 360, rowH = 44, headerH = 90, footerH = 16;
+    const totalH  = headerH + sorted.length * rowH + (topN < sorted.length ? 30 : 0) + footerH;
+    canvas.width  = cw * scale;
+    canvas.height = totalH * scale;
+    const ctx     = canvas.getContext('2d');
+    ctx.scale(scale, scale);
+
+    // Background
+    ctx.fillStyle = '#0A2550';
+    ctx.fillRect(0, 0, cw, totalH);
+
+    // Header
+    ctx.fillStyle = '#F5C518';
+    ctx.font      = 'bold 16px Arial, sans-serif';
+    ctx.fillText('✓ Tsek Mo 2028', 16, 30);
+    ctx.fillStyle = '#7AABDC';
+    ctx.font      = '12px Arial, sans-serif';
+    ctx.fillText(`Live Ranking — ${roleLabel}`, 16, 50);
+    ctx.fillStyle = '#1E3A5A';
+    ctx.fillRect(0, 62, cw, 1);
+
+    // Rows
+    const maxPts = Math.max(...sorted.map(c => scores[c.id]||0), 1);
+    let y = 70;
+
+    sorted.forEach((c, i) => {
+      if (i === topN) {
+        ctx.fillStyle = '#1E3A5A';
+        ctx.fillRect(16, y+4, cw-32, 1);
+        ctx.fillStyle = '#2E5070';
+        ctx.font = '10px Arial, sans-serif';
+        ctx.fillText(`— ibaba ng top ${topN} —`, cw/2 - 48, y+16);
+        y += 30;
+      }
+
+      const pts    = scores[c.id] || 0;
+      const pct    = Math.max((pts / maxPts), 0.03);
+      const inTop  = i < topN;
+      const barW   = (cw - 100) * pct;
+      const barX   = 84;
+      const barY   = y + 22;
+
+      // Rank number
+      ctx.fillStyle = inTop ? '#F5C518' : '#3A5878';
+      ctx.font      = `bold ${inTop ? 12 : 10}px Arial, sans-serif`;
+      ctx.fillText(`${i+1}`, 10, y + 26);
+
+      // Avatar circle
+      ctx.beginPath();
+      ctx.arc(46, y+22, 16, 0, Math.PI*2);
+      ctx.fillStyle = c.bg;
+      ctx.fill();
+      ctx.fillStyle = c.tc;
+      ctx.font = 'bold 10px Arial, sans-serif';
+      const ini = (c.display.split(' ')[0][0] + (c.display.split(' ')[1]?.[0]||'')).toUpperCase();
+      ctx.fillText(ini, 39, y+27);
+
+      // Surname
+      ctx.fillStyle = inTop ? '#C8DFF8' : '#3A5878';
+      ctx.font      = `${inTop ? 'bold ' : ''}11px Arial, sans-serif`;
+      const surname = c.name.split(',')[0].trim();
+      ctx.fillText(surname, barX, y+18);
+
+      // Bar track
+      ctx.fillStyle = '#0A1E38';
+      ctx.beginPath();
+      ctx.roundRect(barX, barY, cw-100-16, 8, 4);
+      ctx.fill();
+
+      // Bar fill
+      const barColor = inTop ? (i===0 ? '#F5C518' : i<3 ? '#2E7DD1' : '#5BA4D8') : '#1E3A58';
+      ctx.fillStyle = barColor;
+      ctx.beginPath();
+      ctx.roundRect(barX, barY, barW, 8, 4);
+      ctx.fill();
+
+      // Points
+      ctx.fillStyle = inTop ? '#7AABDC' : '#3A5878';
+      ctx.font      = `10px Arial, sans-serif`;
+      ctx.fillText(`${pts}pt`, cw-38, y+26);
+
+      y += rowH;
+    });
+
+    // Footer
+    ctx.fillStyle = '#2E5070';
+    ctx.font = '10px Arial, sans-serif';
+    ctx.fillText('tsekmo.app — pribado, walang nagtatago ng iyong sagot', 16, totalH-6);
+
+    try {
+      const link    = document.createElement('a');
+      link.download = `tsekmo-${roleLabel}-ranking.png`;
+      link.href     = canvas.toDataURL('image/png');
+      link.click();
+      btn.classList.remove('saving');
+      btn.textContent = '✅ Na-save na!';
+      setTimeout(() => { btn.textContent = '📸 I-save ang ranking bilang larawan'; }, 3000);
+    } catch(e) {
+      btn.classList.remove('saving');
+      btn.textContent = '📸 I-save ang ranking bilang larawan';
+      alert('I-screenshot na lang ang iyong screen. Hindi available ang auto-save sa browser na ito.');
+    }
+  },
+
 };
 
 /* ═══════════════════════════════════════════════

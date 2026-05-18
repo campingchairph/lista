@@ -383,19 +383,19 @@ function renderRanking() {
    Stored in localStorage key 'tsekmo_photos'
 ═══════════════════════════════════════════════ */
 const DEFAULT_PHOTOS = {
-  splash: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/People_line_up_to_vote_at_a_precinct_in_San_Joaquin%2C_Mabalacat_City%2C_Pampanga%2C_Philippines.jpg/1280px-People_line_up_to_vote_at_a_precinct_in_San_Joaquin%2C_Mabalacat_City%2C_Pampanga%2C_Philippines.jpg',
+  splash: 'https://www.cbnme.com/wp-content/uploads/2021/01/Phillipines.jpg',
   slides: [
-    { url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/People_line_up_to_vote_at_a_precinct_in_San_Joaquin%2C_Mabalacat_City%2C_Pampanga%2C_Philippines.jpg/1280px-People_line_up_to_vote_at_a_precinct_in_San_Joaquin%2C_Mabalacat_City%2C_Pampanga%2C_Philippines.jpg',
+    { url: 'https://media.gettyimages.com/id/1143370732/photo/filipinos-cast-their-votes-at-a-polling-precinct-on-may-13-2019-in-manila-philippines-about.jpg?s=612x612&w=gi&k=20&c=98mlh17yJqaNzCXGle2bSVb-WQzGZDfeIgW4Dxe4wyk=',
       caption: 'Ang bawat boto ay boses ng bawat Pilipino.' },
-    { url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Filipino_student_in_Manila.jpg/1280px-Filipino_student_in_Manila.jpg',
+    { url: 'https://files01.pna.gov.ph/ograph/2022/12/06/tacloban---samar-kids.jpg',
       caption: 'Para sa mga batang nangangarap ng mas magandang bukas.' },
-    { url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Manila_jeepney.jpg/1280px-Manila_jeepney.jpg',
+    { url: 'https://files01.pna.gov.ph/source/2025/06/24/jeepney-driver-refuel-amid-oil-price-hike-06242025jb.jpg',
       caption: 'Ang iyong boto ay para sa bawat manggagawang Pilipino.' },
-    { url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Flood_in_Philippines.jpg/1280px-Flood_in_Philippines.jpg',
+    { url: 'https://www.executivechronicles.com/wp-content/uploads/2015/10/filipino-in-flood-smiling.jpg',
       caption: 'Kailangan natin ng mga lider na handang tumulong sa panahon ng krisis.' },
-    { url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Philippine_rice_terraces.jpg/1280px-Philippine_rice_terraces.jpg',
+    { url: 'https://i.pinimg.com/736x/7c/bd/83/7cbd83e12015a58a5de0dd501a3be580.jpg',
       caption: 'Pangalagaan ang ating kalikasan para sa susunod na henerasyon.' },
-    { url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/People_line_up_to_vote_at_a_precinct_in_San_Joaquin%2C_Mabalacat_City%2C_Pampanga%2C_Philippines.jpg/1280px-People_line_up_to_vote_at_a_precinct_in_San_Joaquin%2C_Mabalacat_City%2C_Pampanga%2C_Philippines.jpg',
+    { url: 'https://miro.medium.com/v2/resize:fit:920/1*k2QGE10ZTlS8vJFv11FUzw.jpeg',
       caption: 'Sama-sama nating itayo ang bansang ating pangarap.' },
   ],
 };
@@ -406,6 +406,11 @@ function getPhotos() {
     return stored ? JSON.parse(stored) : DEFAULT_PHOTOS;
   } catch { return DEFAULT_PHOTOS; }
 }
+
+// Call this once to wipe any old admin overrides so new defaults take effect
+(function clearOldOverrides() {
+  try { localStorage.removeItem('tsekmo_photos'); } catch {}
+}());
 
 function savePhotos(config) {
   try { localStorage.setItem('tsekmo_photos', JSON.stringify(config)); } catch {}
